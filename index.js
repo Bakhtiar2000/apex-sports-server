@@ -70,11 +70,26 @@ async function run() {
         })
 
         //Selections related api
+        app.get('/selections',async (req, res) => {
+            const email = req.query.email
+            // if (!email) {
+            //     res.send([])
+            // }
+
+            // const decodedEmail = req.decoded.email
+            // if (email !== decodedEmail) {
+            //     return res.status(403).send({ error: true, message: 'forbidden access' })
+            // }
+            const query = { email: email };
+            const result = await selectionCollection.find(query).toArray()
+            res.send(result)
+        })
+
         app.post('/selections', async (req, res) => {
             const selected = req.body
             const result = await selectionCollection.insertOne(selected)
             res.send(result)
-          })
+        })
 
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
