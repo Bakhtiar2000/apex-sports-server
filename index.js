@@ -26,24 +26,32 @@ async function run() {
     try {
         const classesCollection = client.db('apexSportsDb').collection('classes')
         const instructorsCollection = client.db('apexSportsDb').collection('instructors')
+        const usersCollection = client.db('apexSportsDb').collection('users')
 
-        //Classes api
+        //Classes related api
         app.get('/classes', async (req, res) => {
             console.log(req.query.limit)
             const limit = parseInt(req.query.limit);
             const options = {
-                sort: { no_of_students: 1 },
-                limit:limit
+                sort: { no_of_students: -1 },
+                limit: limit
             };
-            const result = await classesCollection.find({},options).toArray()
+            const result = await classesCollection.find({}, options).toArray()
             res.send(result)
         })
 
-        //Instructors api
+        //Instructors related api
         app.get('/instructors', async (req, res) => {
             console.log(req.query.limit)
             const limit = parseInt(req.query.limit);
             const result = await instructorsCollection.find().limit(limit).toArray()
+            res.send(result)
+        })
+
+        //Users related api
+        app.post('/users', async (req, res) => {
+            const user = req.body
+            const result = await usersCollection.insertOne(user)
             res.send(result)
         })
 
