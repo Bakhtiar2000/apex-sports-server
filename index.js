@@ -48,19 +48,17 @@ async function run() {
         //addedClasses related api
         app.post('/addedClasses', async (req, res) => {
             const addedClass = req.body;
-            console.log(addedClass)
+            // console.log(addedClass)
             const result = await addedClassCollection.insertOne(addedClass)
             res.send(result)
         })
 
         app.get('/addedClasses', async (req, res) => {
             const email = req.query.email
-            console.log(email)
             const query = { instructor_email: email };
             const result = await addedClassCollection.find(query).toArray()
             res.send(result)
         })
-
 
         //Instructors related api
         app.get('/instructors', async (req, res) => {
@@ -125,14 +123,23 @@ async function run() {
             res.send({ clientSecret: paymentIntent.client_secret })
         })
 
-        
-    //Payment related API
-    app.post('/payments', async (req, res) => {
-        const payment = req.body
-        const result = await paymentCollection.insertOne(payment)
-  
-        res.send(result)
-      })
+
+        //Payment related API
+        app.post('/payments', async (req, res) => {
+            const payment = req.body
+            const result = await paymentCollection.insertOne(payment)
+
+            res.send(result)
+        })
+
+        app.get('/payments', async (req, res) => {
+            console.log(req.query.email)
+            const email = req.query.email
+            const query = { email: email }
+            const result = await paymentCollection.find(query).toArray()
+            res.send(result)
+        })
+
 
 
         await client.db("admin").command({ ping: 1 });
