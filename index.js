@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const app = express();
 const port = process.env.PORT || 5000;
@@ -49,15 +49,16 @@ async function run() {
             console.log(addedClass)
             const result = await addedClassCollection.insertOne(addedClass)
             res.send(result)
-          })
+        })
 
-          app.get('/addedClasses/:email', async (req, res) => {
-            // console.log(req.params.email)
-            const query = { email: req.params.email }
-            const result = await addedClassCollection.findOne(query)
+        app.get('/addedClasses', async (req, res) => {
+            const email = req.query.email
+            console.log(email)
+            const query = { instructor_email: email };
+            const result = await addedClassCollection.find(query).toArray()
             res.send(result)
         })
-      
+
 
         //Instructors related api
         app.get('/instructors', async (req, res) => {
@@ -87,19 +88,17 @@ async function run() {
         })
 
         //Selections related api
-        app.get('/selections',async (req, res) => {
+        app.get('/selections', async (req, res) => {
             const email = req.query.email
             console.log(email)
-            // if (!email) {
-            //     res.send([])
-            // }
-
-            // const decodedEmail = req.decoded.email
-            // if (email !== decodedEmail) {
-            //     return res.status(403).send({ error: true, message: 'forbidden access' })
-            // }
             const query = { email: email };
             const result = await selectionCollection.find(query).toArray()
+            res.send(result)
+        })
+        app.get('/selections/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await selectionCollection.findOne(query).toArray()
             res.send(result)
         })
 
