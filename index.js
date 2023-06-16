@@ -44,6 +44,15 @@ async function run() {
             res.send(result)
         })
 
+        app.patch('/classes/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const filter = { _id: new ObjectId(id) }
+            const update = { $inc: { available_seats: -1 } };
+            const result = await usersCollection.updateOne(filter, update)
+            res.send(result)
+        })
+
 
         //addedClasses related api
         app.post('/addedClasses', async (req, res) => {
@@ -86,6 +95,21 @@ async function run() {
             const result = await usersCollection.insertOne(user)
             res.send(result)
         })
+
+        app.patch('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const filter = { _id: new ObjectId(id) }
+            const updatedBooking = req.body
+            console.log(updatedBooking.newRole)
+            const updateDoc = {
+                $set: {
+                    role: updatedBooking.newRole
+                }
+            };
+            const result = await usersCollection.updateOne(filter, updateDoc)
+            res.send(result)
+        });
 
         //Selections related api
         app.get('/selections', async (req, res) => {
@@ -136,7 +160,10 @@ async function run() {
             console.log(req.query.email)
             const email = req.query.email
             const query = { email: email }
-            const result = await paymentCollection.find(query).toArray()
+            const sortField = req.query.sort === 'newest' ? 'timestamp' : '';
+            const sort = sortField ? { [sortField]: -1 } : {};
+            console.log(sort)
+            const result = await paymentCollection.find(query).sort(sort).toArray()
             res.send(result)
         })
 
