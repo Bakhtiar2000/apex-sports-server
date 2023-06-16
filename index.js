@@ -126,6 +126,13 @@ async function run() {
         })
 
         
+    //Payment related API
+    app.post('/payments', async (req, res) => {
+        const payment = req.body
+        const result = await paymentCollection.insertOne(payment)
+  
+        res.send(result)
+      })
 
 
         await client.db("admin").command({ ping: 1 });
