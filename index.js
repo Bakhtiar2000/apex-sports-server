@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
+const stripe = require('stripe')(process.env.PAYMENT_SECRET_KEY)
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -29,6 +30,7 @@ async function run() {
         const usersCollection = client.db('apexSportsDb').collection('users')
         const selectionCollection = client.db('apexSportsDb').collection('selections')
         const addedClassCollection = client.db('apexSportsDb').collection('addedClasses')
+        const paymentCollection = client.db('apexSportsDb').collection('payments')
 
         //Classes related api
         app.get('/classes', async (req, res) => {
@@ -107,6 +109,24 @@ async function run() {
             const result = await selectionCollection.insertOne(selected)
             res.send(result)
         })
+
+
+        //Create payment intent
+        app.post('/create-payment-intent', async (req, res) => {
+            const { price } = req.body
+            const amount = parseInt(price * 100)
+            console.log(amount)
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: amount,
+                currency: 'usd',
+                payment_method_types: ['card']
+            });
+
+            res.send({ clientSecret: paymentIntent.client_secret })
+        })
+
+        
+
 
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
