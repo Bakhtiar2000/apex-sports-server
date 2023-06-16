@@ -95,10 +95,10 @@ async function run() {
             const result = await selectionCollection.find(query).toArray()
             res.send(result)
         })
-        app.get('/selections/:id', async (req, res) => {
+        app.delete('/selections/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
-            const result = await selectionCollection.findOne(query).toArray()
+            const result = await selectionCollection.deleteOne(query)
             res.send(result)
         })
 
