@@ -42,12 +42,21 @@ async function run() {
             res.send(result)
         })
 
+
+        //addedClasses related api
         app.post('/addedClasses', async (req, res) => {
             const addedClass = req.body;
             console.log(addedClass)
             const result = await addedClassCollection.insertOne(addedClass)
             res.send(result)
           })
+
+          app.get('/addedClasses/:email', async (req, res) => {
+            // console.log(req.params.email)
+            const query = { email: req.params.email }
+            const result = await addedClassCollection.findOne(query)
+            res.send(result)
+        })
       
 
         //Instructors related api
