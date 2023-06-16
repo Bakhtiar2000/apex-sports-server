@@ -28,6 +28,7 @@ async function run() {
         const instructorsCollection = client.db('apexSportsDb').collection('instructors')
         const usersCollection = client.db('apexSportsDb').collection('users')
         const selectionCollection = client.db('apexSportsDb').collection('selections')
+        const addedClassCollection = client.db('apexSportsDb').collection('addedClasses')
 
         //Classes related api
         app.get('/classes', async (req, res) => {
@@ -40,6 +41,14 @@ async function run() {
             const result = await classesCollection.find({}, options).toArray()
             res.send(result)
         })
+
+        app.post('/addedClasses', async (req, res) => {
+            const addedClass = req.body;
+            console.log(addedClass)
+            const result = await addedClassCollection.insertOne(addedClass)
+            res.send(result)
+          })
+      
 
         //Instructors related api
         app.get('/instructors', async (req, res) => {
@@ -56,10 +65,9 @@ async function run() {
         })
 
         app.get('/users/:email', async (req, res) => {
-            console.log(req.params.email)
+            // console.log(req.params.email)
             const query = { email: req.params.email }
             const result = await usersCollection.findOne(query)
-            console.log(result, query)
             res.send(result)
         })
 
@@ -72,6 +80,7 @@ async function run() {
         //Selections related api
         app.get('/selections',async (req, res) => {
             const email = req.query.email
+            console.log(email)
             // if (!email) {
             //     res.send([])
             // }
